@@ -1,0 +1,386 @@
+/*<aside>
+💡 **Question 1**
+Given three integer arrays arr1, arr2 and arr3 **sorted** in **strictly increasing** order, return a sorted array of **only** the integers that appeared in **all** three arrays.
+
+**Example 1:**
+
+Input: arr1 = [1,2,3,4,5], arr2 = [1,2,5,7,9], arr3 = [1,3,4,5,8]
+
+Output: [1,5]
+
+**Explanation:** Only 1 and 5 appeared in the three arrays.
+
+</aside> */
+
+package PPT.AS_4;
+
+import java.util.*;
+
+public class Q1_intersectionOfThreeArray {
+    static List<Integer> arraysIntersection(int[] arr1, int[] arr2, int[] arr3) {
+
+        List<Integer> rst = new LinkedList<>();
+        
+        int i = 0, j = 0, k = 0;
+        
+        while (i < arr1.length && j < arr2.length && k < arr3.length) {
+            if (arr1[i] == arr2[j] && arr2[j] == arr3[k]) {
+                if (rst.isEmpty() || arr1[i] != rst.get(rst.size() - 1)) rst.add(arr1[i]);
+                i++;
+                j++;
+                k++;
+            } else if (arr1[i] < arr2[j]) i++;
+            else if (arr2[j] < arr3[k]) j++; 
+            else k++;
+        }
+        
+        return rst;
+    }
+    
+    public static void main(String[] args) {
+
+        int [] arr1 = {1,2,3,4,5}, arr2 = {1,2,5,7,9},
+        arr3 = {1,3,4,5,8};
+        
+        System.out.println(arraysIntersection(arr1, arr2, arr3));
+        
+    }
+}
+
+2-}
+
+/*<aside>
+💡 **Question 2**
+
+Given two **0-indexed** integer arrays nums1 and nums2, return *a list* answer *of size* 2 *where:*
+
+- answer[0] *is a list of all **distinct** integers in* nums1 *which are **not** present in* nums2*.*
+- answer[1] *is a list of all **distinct** integers in* nums2 *which are **not** present in* nums1.
+
+**Note** that the integers in the lists may be returned in **any** order.
+
+**Example 1:**
+
+**Input:** nums1 = [1,2,3], nums2 = [2,4,6]
+
+**Output:** [[1,3],[4,6]]
+
+**Explanation:**
+
+For nums1, nums1[1] = 2 is present at index 0 of nums2, whereas nums1[0] = 1 and nums1[2] = 3 are not present in nums2. Therefore, answer[0] = [1,3].
+
+For nums2, nums2[0] = 2 is present at index 1 of nums1, whereas nums2[1] = 4 and nums2[2] = 6 are not present in nums2. Therefore, answer[1] = [4,6].
+
+</aside> */
+
+package PPT.AS_4;
+
+import java.util.*;
+
+public class Q2_findTheDifferenceOfTwoArrays {
+
+    static List<List<Integer>> findDifference(int[] nums1, int[] nums2) {
+        HashMap<Integer,Integer> mp = new HashMap<>();
+        List<List<Integer>> ans = new ArrayList<>();
+        
+        for(int x:nums1){
+            mp.put(x,1);
+        }
+
+        for(int x:nums2){
+            if(mp.getOrDefault(x,0) == 1)
+                mp.put(x,3);
+            else if(mp.getOrDefault(x,0) == 0)
+                mp.put(x,2);
+        }
+        
+        List<Integer> f1 = new ArrayList<>();
+        List<Integer> f2 = new ArrayList<>();
+        for(int x:nums1){
+            if(mp.getOrDefault(x,0) == 1){
+                mp.put(x,0);
+                f1.add(x);
+            }
+                
+        }
+        
+        ans.add(f1);
+        for(int x:nums2){
+            if(mp.getOrDefault(x,0) == 2){
+                mp.put(x,0);
+                f2.add(x);
+            }
+        }
+
+        ans.add(f2);
+        
+        return ans;
+    }
+    
+    public static void main(String[] args) {
+
+        int [] nums1 = {1,2,3}, nums2 = {2,4,6};
+        System.out.println(findDifference(nums1, nums2));
+    }
+}
+
+/*<aside>
+💡 **Question 3**
+A permutation of an array of integers is an arrangement of its members into a
+sequence or linear order.
+
+For example, for arr = [1,2,3], the following are all the permutations of arr:
+[1,2,3], [1,3,2], [2, 1, 3], [2, 3, 1], [3,1,2], [3,2,1].
+
+The next permutation of an array of integers is the next lexicographically greater
+permutation of its integer. More formally, if all the permutations of the array are
+sorted in one container according to their lexicographical order, then the next
+permutation of that array is the permutation that follows it in the sorted container.
+
+If such an arrangement is not possible, the array must be rearranged as the
+lowest possible order (i.e., sorted in ascending order).
+
+● For example, the next permutation of arr = [1,2,3] is [1,3,2].
+● Similarly, the next permutation of arr = [2,3,1] is [3,1,2].
+● While the next permutation of arr = [3,2,1] is [1,2,3] because [3,2,1] does not
+have a lexicographical larger rearrangement.
+
+Given an array of integers nums, find the next permutation of nums.
+The replacement must be in place and use only constant extra memory.
+
+**Example 1:**
+Input: nums = [1,2,3]
+Output: [1,3,2]
+
+</aside> */
+
+package PPT.AS_3;
+
+public class Q3_nextPermutation {
+
+    static void nextPermutation(int[] arr) {
+        //1286931-->1289631-->1289136(ans)
+        // find 1st decreasing element from the right
+        int temp=0,i,min=Integer.MAX_VALUE,pivot=0,pos=0;
+        for ( i=arr.length-1;i>=1;i--)
+            if (arr[i]>arr[i-1])
+            {
+                pivot=i;break;
+            }
+        // find no. just larger than arr[pivot-1]
+        if (pivot>0)//to check if there is a decreasing element to the left of pivot(i.e.pivot!=0)
+        {
+            for (i=pivot;i<arr.length;i++)
+            {
+                if (arr[i]>arr[pivot-1])
+                    min=Math.min(min,arr[i]);
+                if (min==arr[i])
+                    pos=i;
+            }
+            //swap min and arr[pivot-1]
+            swap(arr,pos,pivot-1);
+        }
+
+        //reverse from pivot to end
+        int high=arr.length-1;
+        while(pivot<=high){
+            swap(arr,pivot,high);
+            high--;pivot++;
+        }
+    }
+    static void swap(int[] arr,int low,int high){
+            int temp=arr[low];
+            arr[low]=arr[high];
+            arr[high]=temp;
+    }
+    
+    public static void main(String[] args) {
+
+        int [] nums = {1,2,3};
+        nextPermutation(nums);
+
+        System.out.println(Arrays.toString(nums));
+        
+    }
+}
+
+/*Question 4
+Given a sorted array of distinct integers and a target value, return the index if the
+target is found. If not, return the index where it would be if it were inserted in
+order.
+
+You must write an algorithm with O(log n) runtime complexity.
+
+Example 1:
+Input: nums = [1,3,5,6], target = 5
+Output: 2 */
+
+package PPT.AS_3;
+
+public class Q4_searchInsertPosition {
+
+    static int searchInsert(int[] nums, int target) {
+        int  start = 0, end = nums.length - 1;
+        while(start <= end){
+            int mid = start + (end - start)/2;
+            if(nums[mid] == target){
+                return mid;
+            }
+            if(nums[mid] < target){
+                start = mid + 1;
+            }
+            else{
+                end = mid - 1;
+            }
+        }
+        return start;
+    }
+
+    public static void main(String[] args) {
+
+        int [] nums = {1,3,5,6}; 
+        int target = 5;
+
+        System.out.println(searchInsert(nums, target));
+        
+        
+    }
+}
+
+/* <aside>
+💡 **Question 5**
+You are given a large integer represented as an integer array digits, where each
+digits[i] is the ith digit of the integer. The digits are ordered from most significant
+to least significant in left-to-right order. The large integer does not contain any
+leading 0's.
+
+Increment the large integer by one and return the resulting array of digits.
+
+**Example 1:**
+Input: digits = [1,2,3]
+Output: [1,2,4]
+
+**Explanation:** The array represents the integer 123.
+Incrementing by one gives 123 + 1 = 124.
+Thus, the result should be [1,2,4].
+
+</aside>*/
+
+package PPT.AS_3;
+
+import java.util.Arrays;
+
+public class Q5_plusOne {
+    static int[] plusOne(int[] digits) {
+        int n = digits.length;
+        for(int i = n-1; i >= 0; i--){
+            if(digits[i] < 9){
+                digits[i]++;
+                return digits;
+            }
+            else{
+                digits[i] = 0;
+            }
+        }
+        if(digits[0] == 0){
+            int arr[] = new int[n + 1];
+            arr[0] = 1;
+            return arr;
+        }
+        return digits;
+    }
+
+    public static void main(String[] args) {
+        int [] nums = {9,1,2};
+        System.out.println(Arrays.toString(plusOne(nums)));
+    }
+}
+
+/* Question 6
+Given a non-empty array of integers nums, every element appears twice except
+for one. Find that single one.
+
+You must implement a solution with a linear runtime complexity and use only
+constant extra space.
+
+Example 1:
+Input: nums = [2,2,1]
+Output: 1 */
+
+package PPT.AS_3;
+
+public class Q6_singleNumberII {
+
+    static int singleNumber(int[] nums) {
+
+        int xor = 0;
+
+        for(int n : nums){
+            xor = xor^n;
+        }
+        return xor;
+    }
+
+    public static void main(String[] args) {
+
+        int nums[] ={2,2,1};
+        System.out.println(singleNumber(nums));
+        
+    }
+}
+
+/*Question 7
+You are given an inclusive range [lower, upper] and a sorted unique integer array
+nums, where all elements are within the inclusive range.
+
+A number x is considered missing if x is in the range [lower, upper] and x is not in
+nums.
+
+Return the shortest sorted list of ranges that exactly covers all the missing
+numbers. That is, no element of nums is included in any of the ranges, and each
+missing number is covered by one of the ranges.
+
+Example 1:
+Input: nums = [0,1,3,50,75], lower = 0, upper = 99
+Output: [[2,2],[4,49],[51,74],[76,99]]
+
+Explanation: The ranges are:
+[2,2]
+[4,49]
+[51,74]
+[76,99] */
+
+package PPT.AS_3;
+
+public class Q7_missingRange {static List<String> findMissingRanges(int[] nums, int lower, int upper) {
+        int n = nums.length;
+        List<String> ans = new ArrayList<>();
+        if (n == 0) {
+            ans.add(f(lower, upper));
+            return ans;
+        }
+        if (nums[0] > lower) {
+            ans.add(f(lower, nums[0] - 1));
+        }
+        for (int i = 1; i < n; ++i) {
+            int a = nums[i - 1], b = nums[i];
+            if (b - a > 1) {
+                ans.add(f(a + 1, b - 1));
+            }
+        }
+        if (nums[n - 1] < upper) {
+            ans.add(f(nums[n - 1] + 1, upper));
+        }
+        return ans;
+    }
+
+    static String f(int a, int b) {
+        return a == b ? a + "" : a + "->" + b;
+    }
+    public static void main(String[] args) {
+
+        int [] nums = {0,1,3,50,75};
+        int lower = 0, upper = 99;
+        System.out.println(findMissingRanges(nums, lower, upper));
+    }
+}
